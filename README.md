@@ -14,7 +14,7 @@ FILE = alfa_romeo_mito_qv.kn5 ; you can find the name of the car kn5 in the fold
 INSERT = ADU.kn5
 INSERT_IN = COCKPIT_HR ; insert it in cockpit
 ; Options to transform inserted model:
-SCALE = 1, 1, 1     ; change size: X, Y and Z axis (for car, X is left-right, Y and up-down)
-ROTATION = 0, 0, 0  ; rotate: heading, pitch and roll, in degress
-OFFSET = 0.310, 0.945, 0.545    ; move: X, Y and Z axis, in meters
+SCALE = 1.3, 1.3, 1.3     ; change size: X, Y and Z axis (for car, X is left-right, Y and up-down)
+ROTATION = 0, 20, 0  ; rotate: heading, pitch and roll, in degress
+OFFSET = 0.310, 0.955, 0.545    ; move: X, Y and Z axis, in meters
 ```
