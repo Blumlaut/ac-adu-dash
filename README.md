@@ -5,9 +5,12 @@ ECUMaster ADU Dash for Assetto Corsa, utilising CSP
 TODO: explain how this works
 
 
-Example Config for the E30 Drift:
+Example Config for the E30 Drift, add to ext_config.lua and copypaste ADU.ini, ADU5.ks and assets folder to car's extension folder.
 
 ```
+
+[INCLUDE: ADU.ini]
+
 [MODEL_REPLACEMENT_...]
 ACTIVE = 1
 FILE = bmw_m3_e30.kn5 ; you can find the name of the car kn5 in the folder of your car.
@@ -17,4 +20,6 @@ INSERT_IN = COCKPIT_HR ; insert it in cockpit
 SCALE = 1.2,1.1,1.1     ; change size: X, Y and Z axis (for car, X is left-right, Y and up-down)
 ROTATION = 0, 23, 0  ; rotate: heading, pitch and roll, in degress
 OFFSET = 0.317, 0.893, 0.520    ; move: X, Y and Z axis, in meters
+
+
 ```
