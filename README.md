@@ -49,6 +49,14 @@ After loading into the game, the Dash should be visible:
 Menus can be cycled with ALT+Numpad9, the RPM Lights can be cycled with ALT+Numpad8. (ExtraC and ExtraB respectively.)
 
 
+## Issues and Technical Limitations
+
+For Open Bugs and Issues, please refer to [Issues](https://github.com/Blumlaut/ac-adu-dash/issues)
+
+Due to the Dashboard Textures being made by hand, the maximum RPM it can display is currently 8000RPM.
+
+If the car has VAO then the ADU may not match the darkness levels of the surrounding dash.
+
 ## License
 
 You are allowed to use, edit and redistribute modified versions of `ac-adu-dash`, however, we require that you give credit and link to this original project when doing so.
