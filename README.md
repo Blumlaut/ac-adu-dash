@@ -53,9 +53,8 @@ Menus can be cycled with ALT+Numpad9, the RPM Lights can be cycled with ALT+Nump
 
 For Open Bugs and Issues, please refer to [Issues](https://github.com/Blumlaut/ac-adu-dash/issues)
 
-Due to the Dashboard Textures being made by hand, the maximum RPM it can display is currently 8000RPM.
-
-If the car has VAO then the ADU may not match the darkness levels of the surrounding dash.
+- Due to the Dashboard Textures being made by hand, the maximum RPM it can display is currently 8000RPM.
+- If the car has VAO then the ADU may not match the darkness levels of the surrounding dash.
 
 ## License
 
