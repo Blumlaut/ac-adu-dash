@@ -1,3 +1,5 @@
+
+
 Config = {
     ADU1 = {},
     ADU2 = {
@@ -10,7 +12,9 @@ Config = {
     }
 }
 
+sim = ac.getSim()
 SmoothedAccel = {x = 0, z = 0} -- global default value definition for x and z axis of vec() car.acceleration.
+
 function modeA(dt) -- first screem of the ADU, part of the switching function at the very bottom
     display.image {
         image = "assets/ADU1.dds",
@@ -77,8 +81,8 @@ function modeA(dt) -- first screem of the ADU, part of the switching function at
     end
     display.text {
         text = gearText,
-        pos = vec2(600, 620),
-        letter = vec2(600, 830),
+        pos = vec2(650, 620),
+        letter = vec2(500, 830),
         font = "c7_new",
         width = 46,
         alignment = 0.5,
@@ -296,398 +300,37 @@ function modeA(dt) -- first screem of the ADU, part of the switching function at
     end
 end
 
-function modeB(dt) -- second screen
-    -- grey background for second screen, draws on top of mesh texture so pay attention to transparency, might need layering depending on what youre doing
-    display.rect {
-        pos = vec2(9, 405), 
-        size = vec2(1800, 990),
-        color = rgbm(0.55, 0.55, 0.55, 1)
-    }
-    -- rpm gauge
-    local rpmPercentage = (car.rpm / 8000 * 100) -- conversion to %
-    local amountOfSquares = math.ceil(rpmPercentage/6.25) -- only render the squares the user will actually see, for performance.
-
-    local color = rgbm(0, 255, 239, 255) -- normal colour of the displayed rectangle
-    if Config.ADU2.ShiftWarn < (car.rpm / car.rpmLimiter * 100) then -- if rpms exceed Configured Value colour switches
-        color = rgbm(255, 0, 0, 255)
-    end
-    local rpmPos = vec2(600, 1210)
-    local rpmSize = vec2(200, 200)
-    local rpmPivot = vec2(1001, 1021)
-
-    for i = 1, amountOfSquares do
-        local thisRotation = (-rpmPercentage) * 2.7 -- "-" turns rotation counter clockwise
-        ui.beginRotation()
-        ui.beginRotation()
-        display.rect {
-            -- draws rectangle
-            pos = rpmPos,
-            size = rpmSize,
-            color = color
-        }
-        ui.endRotation(30)
-        if rpmPercentage > (100 / 16 * i) then
-            thisRotation = -(100 / 16 * i) * 2.7
-        end
-        ui.endPivotRotation(thisRotation + 107, rpmPivot)
-    end
-    -- actual background for second screen, last in line since script runs top to bottom and transparency layer needs to be at the very top of the stack
-    display.image {
-        image = "assets/ADU2_8000.dds",
-        pos = vec2(0, 399), -- coordinates of top left corner
-        size = vec2(2048, 1248)
-    }
-    -- battery gauge
-    local value = math.saturate(car.batteryVoltage / 15) -- saturate clamps value between 0 and 1
-    display.image {
-        image = "assets/BOOST.dds",
-        pos = vec2(47, 1514),
-        size = vec2(518 * value, 59),
-        uvStart = vec2(0, 0),
-        uvEnd = vec2(value, 1)
-    }
-    -- boost gauge
-    local value = math.saturate(car.turboBoost / 2) -- saturate clamps value between 0 and 1
-    display.image {
-        image = "assets/BOOST.dds",
-        pos = vec2(1430, 1514),
-        size = vec2(518 * value, 59),
-        uvStart = vec2(0, 0),
-        uvEnd = vec2(value, 1)
-    }
-    -- water temperature gauge
-    local value = math.saturate(car.waterTemperature / 120) -- saturate clamps value between 0 and 1
-    display.image {
-        image = "assets/WATERT.dds",
-        pos = vec2(48, 1299),
-        size = vec2(108, -value * 755), -- -value to invert direction of expansion
-        uvStart = vec2(0, 0), -- up/down instead of left/right
-        uvEnd = vec2(1, value) -- up/down instead of left/right
-    }
-    -- oil temperature gauge
-    local value = math.saturate(car.oilTemperature / 120) -- saturate clamps value between 0 and 1
-    display.image {
-        image = "assets/OILT.dds",
-        pos = vec2(1825, 1300),
-        size = vec2(112, -value * 769),
-        uvStart = vec2(0, 0),
-        uvEnd = vec2(1, value)
-    }
-    -- numeric battery gauge
-    display.text {
-        text = string.format("%.1f", car.batteryVoltage),
-        pos = vec2(35, 1420),
-        letter = vec2(45, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- unit display for gauge, doesnt need to be part of the texture, can be drawn directly onto the mesh
-    display.text {
-        text = "V",
-        pos = vec2(175, 1420),
-        letter = vec2(65, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = 0
-    }
-    -- numeric boost gauge
-    display.text {
-        text = string.format("%.1f", car.turboBoost),
-        pos = vec2(1835, 1420),
-        letter = vec2(45, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- unit
-    display.text {
-        text = "BOOST",
-        pos = vec2(1535, 1420),
-        letter = vec2(65, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- numeric water temp gauge
-    display.text {
-        text = string.format("%.1f", car.waterTemperature),
-        pos = vec2(35, 440),
-        letter = vec2(45, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- numeric oil temp gauge
-    display.text {
-        text = string.format("%.1f", car.oilTemperature),
-        pos = vec2(1810, 440),
-        letter = vec2(45, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- unit
-    display.text {
-        text = "C",
-        pos = vec2(185, 440),
-        letter = vec2(65, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- unit
-    display.text {
-        text = "C",
-        pos = vec2(1960, 440),
-        letter = vec2(65, 90),
-        font = "c7_new",
-        width = 46,
-        alignment = 1,
-        spacing = -10
-    }
-    -- speed gauge
-    digitCoords = {
-        -- define your coords here
-        vec2(805, 900), -- left triple
-        vec2(865, 900), -- left dual
-        vec2(925, 900), -- center
-        vec2(985, 900), -- right dual
-        vec2(1045, 900) -- right triple
-    }
-    -- preparing our table of speed digits
-    local displayspeed = tostring(math.floor(car.poweredWheelsSpeed))
-    local speedTable = {}
-    for i = 1, string.len(displayspeed) do
-        speedTable[i] = displayspeed:sub(i, i)
-    end
-    if string.len(displayspeed) == 1 then
-        display.text {
-            -- rightmost digit
-            text = speedTable[1],
-            pos = digitCoords[3],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = -1.0
-        }
-    elseif string.len(displayspeed) == 2 then
-        display.text {
-            -- rightmost digit
-            text = speedTable[2],
-            pos = digitCoords[4],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = -1.0
-        }
-        display.text {
-            -- leftmost digit
-            text = speedTable[1],
-            pos = digitCoords[2],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = -1.0
-        }
-    elseif string.len(displayspeed) == 3 then
-        display.text {
-            -- rightmost digit
-            text = speedTable[3],
-            pos = digitCoords[5],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = -1.0
-        }
-        display.text {
-            -- center digit
-            text = speedTable[2],
-            pos = digitCoords[3],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = -1.0
-        }
-        display.text {
-            -- leftmost digit
-            text = speedTable[1],
-            pos = digitCoords[1],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = -1.0
-        }
-    end
-    -- numeric rpm gauge, same principal applies as for speed, this is for expansion from center to both directions instead of digits appearing to the left/right
-    digitCoords = {
-        -- define your coords here
-        vec2(735, 1300), --left quad
-        vec2(795, 1300), --left triple
-        vec2(855, 1300), --left dual
-        vec2(915, 1300), --center
-        vec2(975, 1300), --right dual
-        vec2(1035, 1300),--right triple    
-        vec2(1095, 1300) --right quad
-    }
-    -- preparing our table of rpm digits
-    local displayrpm = tostring(math.floor(car.rpm))
-    local rpmTable = {}
-    for i = 1, string.len(displayrpm) do
-        rpmTable[i] = displayrpm:sub(i, i)
-    end
-    if string.len(displayrpm) == 1 then
-        display.text {
-            -- rightmost digit
-            text = rpmTable[1],
-            pos = digitCoords[4],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-    elseif string.len(displayrpm) == 2 then
-        display.text {
-            -- rightmost digit
-            text = rpmTable[2],
-            pos = digitCoords[5],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-        display.text {
-            -- leftmost digit
-            text = rpmTable[1],
-            pos = digitCoords[3],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-    elseif string.len(displayrpm) == 3 then
-        display.text {
-            -- rightmost digit
-            text = rpmTable[3],
-            pos = digitCoords[6],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-        display.text {
-            -- center digit
-            text = rpmTable[2],
-            pos = digitCoords[4],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-        display.text {
-            -- leftmost digit
-            text = rpmTable[1],
-            pos = digitCoords[2],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-    elseif string.len(displayrpm) == 4 then
-        display.text {
-            -- rightmost digit
-            text = rpmTable[4],
-            pos = digitCoords[7],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-        display.text {
-            -- center digit
-            text = rpmTable[3],
-            pos = digitCoords[5],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-        display.text {
-            -- leftmost digit
-            text = rpmTable[2],
-            pos = digitCoords[3],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-        display.text {
-            -- leftmost digit
-            text = rpmTable[1],
-            pos = digitCoords[1],
-            letter = vec2(145, 240),
-            font = "c7_new",
-            width = 16,
-            spacing = 0,
-            alignment = 1.0
-        }
-    end
-end
-
-function modeC(dt)
+function modeB(dt)
     display.rect {
         pos = vec2(9, 405), 
         size = vec2(1400, 940),
         color = rgbm(0.55, 0.55, 0.55, 1)
     }
 
-    -- TODO: Make this code nicer.
-    local rpmBeforeWarn = math.saturate(math.min(car.rpm, 7050) / 8000)
-    local rpmAfterWarn = math.saturate(car.rpm / 8000)
-
-    if Config.ADU3.ShiftWarn < (car.rpm / car.rpmLimiter * 100) then -- if rpms exceed Configured Value colour switches
-        display.rect {
-            pos = vec2(9, 1360),
-            size = vec2(1400, -rpmAfterWarn * 900),
-            color = rgbm(1, 0, 0, 1),
-            uvStart = vec2(0, 0),
-            uvEnd = vec2(1, rpmAfterWarn)
-        }
-    end
+local value = math.saturate(math.min(car.rpm, 7000) / 8000) -- saturate clamps value between 0 and 1
     display.rect {
-        pos = vec2(9, 1360),
-        size = vec2(1400, -rpmBeforeWarn * 900),
-        color = rgbm(1, 0.8, 0, 1),
-        uvStart = vec2(0, 0),
-        uvEnd = vec2(1, rpmBeforeWarn)
+        color =rgbm(1, 0.8, 0, 1),
+        pos = vec2(50, 1350), -- coordinates of top left corner of the texture, pay attention to resolution of that texture
+        size = vec2(1400,  -value * 905), -- size of the image, "value *" makes it expand towards that maximum value
+        uvStart = vec2(0, 0), -- uv coordinate of the top left corner (default is 0, 0)
+        uvEnd = vec2(1, 1) -- uv coordinate of the bottom right corner (default is 1, 1), 0-8000rpms = value, 1 as range for the "uncovering fo the texture"
     }
+
+local value = math.saturate((math.min(car.rpm, 8000)-7000) / 8000) -- saturate clamps value between 0 and 1
+    display.rect {
+        color =rgbm(1, 0, 0, 1),
+        pos = vec2(50, 562), -- coordinates of top left corner of the texture, pay attention to resolution of that texture
+        size = vec2(1400,  -value * 1150), -- size of the image, "value *" makes it expand towards that maximum value
+        uvStart = vec2(0, 0), -- uv coordinate of the top left corner (default is 0, 0)
+        uvEnd = vec2(1, 1) -- uv coordinate of the bottom right corner (default is 1, 1), 0-8000rpms = value, 1 as range for the "uncovering fo the texture"
+    }
+
     display.image {
         image = "assets/ADU4.dds",
         pos = vec2(0, 399), -- coordinates of top left corner
         size = vec2(2048, 1248)
     }
+
     local value = math.saturate((car.oilTemperature / 140) - 0.32)
     display.rect {
         pos = vec2(140, 1478),
@@ -835,8 +478,8 @@ function modeC(dt)
 		end
 		display.text {
 			text = gearText,
-			pos = vec2(1390, 380),
-			letter = vec2(600, 830),
+			pos = vec2(1500, 380),
+			letter = vec2(500, 830),
 			font = "c7_new",
 			width = 46,
 			alignment = 0.5,
@@ -855,7 +498,7 @@ function modeC(dt)
 		}
 	end
 
-function modeD(dt)
+function modeC(dt)
 	-- grey background for second screen, draws on top of mesh texture so pay attention to transparency, might need layering depending on what youre doing
     display.rect {
         pos = vec2(9, 405), 
@@ -982,8 +625,8 @@ function modeD(dt)
     end
     display.text {
         text = gearText,
-        pos = vec2(765, 670),
-        letter = vec2(500, 730),
+        pos = vec2(820, 670),
+        letter = vec2(400, 730),
         font = "c7_new",
         width = 46,
         alignment = 0.5,
@@ -1221,55 +864,9 @@ function modeD(dt)
         }
     end
 end	
-	
-function modeE(dt)
-	display.rect {
-        pos = vec2(56, 606), -- coordinates of top left corner
-        size = vec2(943, 971),
-		color = rgbm(0.55,0.55,0.55,1)
-    }
-	
-	display.image {
-        image = "assets/ADU6.dds",
-        pos = vec2(0, 399), -- coordinates of top left corner
-        size = vec2(2048, 1248)
-    }
-	
-	display.image {		       
-		image = "assets/TIRES_W_BG.dds",
-        pos = vec2(1139, 680), -- coordinates of top left corner
-        size = vec2(622, 800)		
-		
-    }
-	-- hier müssen die reifen rects zwischen
-		
-	display.image {		       
-		image = "assets/TIRES_F_RWD.dds",
-        pos = vec2(1095, 651), -- coordinates of top left corner
-        size = vec2(720, 840)		
-		
-    }
 
-	display.text {
-        text = "TIRES MONITOR",
-        pos = vec2(530, 385),
-        letter = vec2(90, 190),
-        font = "c7_new",
-        width = 1,
-        alignment = 0.5,
-        spacing = -13,
-		color = rgbm(1,1,1,1)
-	}	
-	-- Das soll das touchfeld werden. einfach nur mit PSI/BAR)
-	display.rect {
-        pos = vec2(1820, 1480), -- coordinates of top left corner
-        size = vec2(200, 140),
-		color = rgbm(0.2,0.2,0.55,1)
-    }
-end
-
--- display switch
-local listOfModes = {modeA, modeB, modeC, modeD, modeE} -- you can add infinite displays, their elements need to be inside function modeN(dt)
+-- didplay switch
+local listOfModes = {modeA, modeB, modeC} -- you can add infinite displays, their elements need to be inside function modeN(dt)
 local currentMode = tonumber(ac.loadDisplayValue("displayMode", 1))
 local lastExtraCState = false
 
