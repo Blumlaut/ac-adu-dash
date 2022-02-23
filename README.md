@@ -1,7 +1,7 @@
 # ac-adu-dash
 ECUMaster ADU Dash for Assetto Corsa, utilising CSP
 
-ac-adu-dash is a replica of a ECUMaster EDU5 Dash, made in Assetto Corsa, it is designed to be added to existing cars using the car's `ext_config.ini`
+ac-adu-dash is a replica of a ECUMaster ADU5 Dash, made in Assetto Corsa, it is designed to be added to existing cars using the car's `ext_config.ini`
 
 ![edu](https://user-images.githubusercontent.com/13604413/155331867-91d6e980-a3f7-4507-a513-cfcb7799fd63.gif)
 
