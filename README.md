@@ -60,6 +60,6 @@ For Open Bugs and Issues, please refer to [Issues](https://github.com/Blumlaut/a
 
 You are allowed to use, edit and redistribute modified versions of `ac-adu-dash`, however, we require that you give credit and link to this original project when doing so.
 
-Please do not sell, or ship ac-adu-dash alongside paid models, cars or software.
+Please do not sell, or ship ac-adu-dash alongside **paid** models, cars and/or software.
 
 Contributions via Pull Requests are very much encouraged.
