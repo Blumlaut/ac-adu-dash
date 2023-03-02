@@ -870,8 +870,19 @@ local listOfModes = {modeA, modeB, modeC} -- you can add infinite displays, thei
 local currentMode = tonumber(ac.loadDisplayValue("displayMode", 1))
 local lastExtraCState = false
 
+
+refreshRate = 0.02222 -- 45 fps
+curDelta = 0
+
 function update(dt)
     ac.debug("Update Delta", dt)
+    curDelta = curDelta+dt
+	if (curDelta <= refreshRate) then
+		return false
+	elseif (curDelta >= refreshRate) then
+		curDelta = 0
+	end
+
     if car.extraC ~= lastExtraCState then -- switching is bound to extraC key, this tracks the state of extraC
         currentMode = currentMode + 1 -- you start at mode 1 and each extraC press adds +1 to the mode count
         if currentMode > #listOfModes then -- as soon as your mode counter exceeds the number of modes inside listOfModes it defaults back to mode 1
